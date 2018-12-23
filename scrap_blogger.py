@@ -23,7 +23,7 @@ class BloggerSpider(scrapy.Spider):
     def __init__(self, start_article_url):
         super(BloggerSpider).__init__()
         self.start_urls = [start_article_url]
-        self.folder = 'data/blogger/'
+        self.folder = 'data/html/blogger/'
 
     def parse(self, response):
         url = response.url

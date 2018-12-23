@@ -23,7 +23,7 @@ class WordpressSpider(scrapy.Spider):
     def __init__(self, articles_index_urls):
         super(WordpressSpider).__init__()
         self.start_urls = articles_index_urls
-        self.folder = 'data/wordpress/'
+        self.folder = 'data/html/wordpress/'
 
     def parse(self, response):
         soup = BeautifulSoup(response.body, features='lxml')

@@ -129,8 +129,8 @@ class WordpressTextExtractor(TextExtractor):
 
 if __name__ == '__main__':
 
-    #extractor = BloggerTextExtractor(glob('data/blogger/*')[0])
-    #extractor = WordpressTextExtractor(glob('data/wordpress/*')[0])
+    #extractor = BloggerTextExtractor(glob('data/html/blogger/*')[0])
+    #extractor = WordpressTextExtractor(glob('data/html/wordpress/*')[0])
     #
     # extractor.trim()
     #
@@ -141,20 +141,20 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
 
-    filepaths = glob('data/blogger/*.html')
+    filepaths = glob('data/html/blogger/*.html')
     LOGGER.info(f'processing blogger ({len(filepaths)} articles)')
 
-    with open('data/blogger.txt', 'w') as f:
+    with open('data/html/blogger.txt', 'w') as f:
         for filepath in filepaths:
             text = BloggerTextExtractor(filepath).get_text()
             if text:
                 f.write(text + '\n')
 
-    filepaths = glob('data/wordpress/*.html')
-    LOGGER.info(f'processing blogger ({len(filepaths)} articles)')
-
-    with open('data/wordpress.txt', 'w') as f:
-        for filepath in filepaths:
-            text = WordpressTextExtractor(filepath).get_text()
-            if text:
-                f.write(text + '\n')
+    # filepaths = glob('data/html/wordpress/*.html')
+    # LOGGER.info(f'processing blogger ({len(filepaths)} articles)')
+    #
+    # with open('data/html/wordpress.txt', 'w') as f:
+    #     for filepath in filepaths:
+    #         text = WordpressTextExtractor(filepath).get_text()
+    #         if text:
+    #             f.write(text + '\n')
