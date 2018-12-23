@@ -37,7 +37,7 @@ class TextExtractor:
             if line:
                 lines.append(line)
 
-        text = ' '.join(lines)
+        text = ' '.join(lines).strip()
 
         return text
 
@@ -95,7 +95,9 @@ class BloggerTextExtractor(TextExtractor):
         Remove a list of common non-text tags from the page.
         """
 
-        tags = ['script', 'style', 'title', 'h1', 'h2', 'h3', 'h4', 'table', 'ul']
+        tags = ['script', 'style',
+                'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'table', 'ul', 'dl']
         self._remove_tags(tags)
 
         classes = ['header section', 'widget PageList', 'blog-pager',
@@ -113,7 +115,9 @@ class WordpressTextExtractor(TextExtractor):
         super().__init__(filepath)
 
     def trim(self):
-        tags = ['script', 'style', 'title', 'h1', 'h2', 'h3', 'h4', 'table', 'ul', 'dl']
+        tags = ['script', 'style',
+                'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'table', 'ul', 'dl']
         self._remove_tags(tags)
 
         classes = ['ngg-galleryoverview', 'commentlist', 'navigation']
@@ -124,12 +128,33 @@ class WordpressTextExtractor(TextExtractor):
 
 
 if __name__ == '__main__':
-    extractor = BloggerTextExtractor(glob('data/blogger/*')[0])
+
+    #extractor = BloggerTextExtractor(glob('data/blogger/*')[0])
     #extractor = WordpressTextExtractor(glob('data/wordpress/*')[0])
+    #
+    # extractor.trim()
+    #
+    # with open('trimmed.html', 'w') as f:
+    #     f.write(extractor.get_html())
+    #
+    # print(extractor.get_text())
 
-    extractor.trim()
+    logging.basicConfig(level=logging.INFO)
 
-    with open('trimmed.html', 'w') as f:
-        f.write(extractor.get_html())
+    filepaths = glob('data/blogger/*.html')
+    LOGGER.info(f'processing blogger ({len(filepaths)} articles)')
 
-    print(extractor.get_text())
+    with open('data/blogger.txt', 'w') as f:
+        for filepath in filepaths:
+            text = BloggerTextExtractor(filepath).get_text()
+            if text:
+                f.write(text + '\n')
+
+    filepaths = glob('data/wordpress/*.html')
+    LOGGER.info(f'processing blogger ({len(filepaths)} articles)')
+
+    with open('data/wordpress.txt', 'w') as f:
+        for filepath in filepaths:
+            text = WordpressTextExtractor(filepath).get_text()
+            if text:
+                f.write(text + '\n')
