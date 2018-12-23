@@ -127,10 +127,46 @@ class WordpressTextExtractor(TextExtractor):
         self._remove_divs_by_id(ids)
 
 
+def create_txt_dataset(blog_name):
+    """
+    Create txt dataset from html files.
+
+    Args:
+        blog_name (str): either 'blogger' or 'wordpress'.
+    """
+
+    assert blog_name in ('blogger', 'wordpress')
+
+    if blog_name == 'blogger':
+        cls = BloggerTextExtractor
+    elif blog_name == 'wordpress':
+        cls = WordpressTextExtractor
+    else:
+        raise NotImplementedError
+
+    html_filepaths = glob(f'data/html/{blog_name}/*.html')
+    LOGGER.info(f'processing {blog_name} ({len(html_filepaths)} articles)')
+
+    for html_filepath in html_filepaths:
+        text = cls(html_filepath).get_text()
+
+        if not text:
+            LOGGER.info(f'  Empty article {html_filepath}; skipping')
+            continue
+
+        txt_filepath = html_filepath.replace('html', 'txt')
+        LOGGER.info(f'  {html_filepath} -> {txt_filepath}')
+
+        with open(txt_filepath, 'w') as f:
+            f.write(text)
+
+
 if __name__ == '__main__':
 
-    #extractor = BloggerTextExtractor(glob('data/html/blogger/*')[0])
-    #extractor = WordpressTextExtractor(glob('data/html/wordpress/*')[0])
+    logging.basicConfig(level=logging.INFO)
+
+    # extractor = BloggerTextExtractor(glob('data/html/blogger/*')[0])
+    # extractor = WordpressTextExtractor(glob('data/html/wordpress/*')[0])
     #
     # extractor.trim()
     #
@@ -139,22 +175,5 @@ if __name__ == '__main__':
     #
     # print(extractor.get_text())
 
-    logging.basicConfig(level=logging.INFO)
-
-    filepaths = glob('data/html/blogger/*.html')
-    LOGGER.info(f'processing blogger ({len(filepaths)} articles)')
-
-    with open('data/html/blogger.txt', 'w') as f:
-        for filepath in filepaths:
-            text = BloggerTextExtractor(filepath).get_text()
-            if text:
-                f.write(text + '\n')
-
-    # filepaths = glob('data/html/wordpress/*.html')
-    # LOGGER.info(f'processing blogger ({len(filepaths)} articles)')
-    #
-    # with open('data/html/wordpress.txt', 'w') as f:
-    #     for filepath in filepaths:
-    #         text = WordpressTextExtractor(filepath).get_text()
-    #         if text:
-    #             f.write(text + '\n')
+    create_txt_dataset('blogger')
+    create_txt_dataset('wordpress')
