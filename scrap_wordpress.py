@@ -57,6 +57,6 @@ if __name__ == '__main__':
         articles_index_urls = urls['wordpress']
 
     crawler = CrawlerProcess({'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-                              'DOWNLOAD_DELAY': 10})
+                              'DOWNLOAD_DELAY': 3})
     crawler.crawl(WordpressSpider, articles_index_urls)
     crawler.start()

@@ -42,8 +42,8 @@ class BloggerSpider(scrapy.Spider):
         filepath = os.path.join(self.folder, filename)
 
         LOGGER.info(f'Saving article to {filepath}')
-        # with open(filepath, 'wb') as f:
-        #     f.write(html)
+        with open(filepath, 'wb') as f:
+            f.write(html)
 
 
 if __name__ == '__main__':
@@ -54,6 +54,6 @@ if __name__ == '__main__':
         start_article_url = urls['blogger']
 
     crawler = CrawlerProcess({'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-                              'DOWNLOAD_DELAY': 10})
+                              'DOWNLOAD_DELAY': 3})
     crawler.crawl(BloggerSpider, start_article_url)
     crawler.start()
