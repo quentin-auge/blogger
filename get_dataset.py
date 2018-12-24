@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import abc
 import logging
 from glob import glob
