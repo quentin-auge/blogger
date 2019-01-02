@@ -163,6 +163,31 @@ def create_txt_dataset(blog_name):
             f.write(text)
 
 
+def create_one_txt_dataset(blog_name):
+    """
+    Create one txt dataset from multiple txt files.
+
+    Args:
+        blog_name (str): either 'blogger' or 'wordpress'.
+    """
+
+    assert blog_name in ('blogger', 'wordpress')
+
+    filepaths = glob(f'data/txt/{blog_name}/*.txt')
+
+    articles = []
+    for filepath in filepaths:
+        with open(filepath) as f:
+            articles.append(f.read())
+
+    one_txt_filepath = f'data/one_txt/{blog_name}.txt'
+
+    LOGGER.info(f'Writing {one_txt_filepath}')
+
+    with open(one_txt_filepath, 'w') as f:
+        f.write(' '.join(articles))
+
+
 if __name__ == '__main__':
 
     logging.basicConfig(level=logging.INFO)
@@ -177,5 +202,8 @@ if __name__ == '__main__':
     #
     # print(extractor.get_text())
 
-    create_txt_dataset('blogger')
-    create_txt_dataset('wordpress')
+    #create_txt_dataset('blogger')
+    #create_txt_dataset('wordpress')
+
+    create_one_txt_dataset('blogger')
+    create_one_txt_dataset('wordpress')
