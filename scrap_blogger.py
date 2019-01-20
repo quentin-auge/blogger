@@ -14,16 +14,16 @@ LOGGER = logging.getLogger(__name__)
 
 class BloggerSpider(scrapy.Spider):
     """
-    Scrap blogger articles.
+    Download articles from a blogspot blog.
 
     Start with an article, and proceed to the previous article repeatedly
     until there is not article left.
     """
 
-    def __init__(self, start_article_url):
+    def __init__(self, start_article_url, dst_folder):
         super(BloggerSpider).__init__()
         self.start_urls = [start_article_url]
-        self.folder = 'data/html/blogger/'
+        self.dst_folder = dst_folder
 
     def parse(self, response):
         url = response.url
@@ -39,7 +39,7 @@ class BloggerSpider(scrapy.Spider):
 
     def save_article(self, url, html):
         filename = url.split('/')[-1]
-        filepath = os.path.join(self.folder, filename)
+        filepath = os.path.join(self.dst_folder, filename)
 
         LOGGER.info(f'Saving article to {filepath}')
         with open(filepath, 'wb') as f:
@@ -53,7 +53,9 @@ if __name__ == '__main__':
         urls = yaml.load(f.read())
         start_article_url = urls['blogger']
 
-    crawler = CrawlerProcess({'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-                              'DOWNLOAD_DELAY': 3})
-    crawler.crawl(BloggerSpider, start_article_url)
+    crawler = CrawlerProcess({
+        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
+        'DOWNLOAD_DELAY': 3
+    })
+    crawler.crawl(BloggerSpider, start_article_url, dst_folder='data/html/blogger/')
     crawler.start()
