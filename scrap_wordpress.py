@@ -15,15 +15,15 @@ LOGGER = logging.getLogger(__name__)
 
 class WordpressSpider(scrapy.Spider):
     """
-    Scrap wordpress articles.
+    Download articles from a wordpress blog.
 
-    Start with a list of articles index pages, and get all the articles listed in them.
+    Start with the index page(s), and get all the articles listed there.
     """
 
-    def __init__(self, articles_index_urls):
+    def __init__(self, articles_index_urls, dst_folder):
         super(WordpressSpider).__init__()
         self.start_urls = articles_index_urls
-        self.folder = 'data/html/wordpress/'
+        self.dst_folder = dst_folder
 
     def parse(self, response):
         soup = BeautifulSoup(response.body, features='lxml')
@@ -42,7 +42,7 @@ class WordpressSpider(scrapy.Spider):
         filename = url.split('/')[-1]
         # ?p=12345 -> 12345.html
         filename = filename[3:] + '.html'
-        filepath = os.path.join(self.folder, filename)
+        filepath = os.path.join(self.dst_folder, filename)
 
         LOGGER.info(f'Saving article to {filepath}')
         with open(filepath, 'wb') as f:
@@ -56,7 +56,9 @@ if __name__ == '__main__':
         urls = yaml.load(f.read())
         articles_index_urls = urls['wordpress']
 
-    crawler = CrawlerProcess({'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
-                              'DOWNLOAD_DELAY': 3})
-    crawler.crawl(WordpressSpider, articles_index_urls)
+    crawler = CrawlerProcess({
+        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)',
+        'DOWNLOAD_DELAY': 3
+    })
+    crawler.crawl(WordpressSpider, articles_index_urls, dst_folder='data/html/wordpress/')
     crawler.start()
